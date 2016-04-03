@@ -1,5 +1,5 @@
-# tabasco package
+# Tabasco
 
-A short description of your package.
+Dock and move panels by dragging their tabs!
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+![Screenshot](https://github.com/morassman/tabasco/blob/master/resources/demo.gif?raw=true)

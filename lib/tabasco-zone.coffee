@@ -70,6 +70,8 @@ class TabascoZone extends HTMLElement
   moveItemToTarget: ->
     if @activePane != @targetPane
       @activePane.moveItemToPane(@activePaneItem, @targetPane, @targetPane.getItems().length);
+      if @activePane.getItems().length == 0
+        @activePane.destroy();
 
     if @position == 'center'
       @targetPane.activate();
@@ -94,8 +96,7 @@ class TabascoZone extends HTMLElement
 
     # For some reason this doesn't cause the item to get focus...
     newPane?.activate();
-    newPane?.activateItem(copiedItem);
-    # newPane.getItems()[0]);
+    newPane?.activateItem(newPane.getItems()[0]);
 
   # Got this from the tabs package.
   copyItem: (item) ->

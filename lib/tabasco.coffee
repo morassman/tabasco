@@ -3,37 +3,39 @@
 TabascoZone = require './tabasco-zone'
 
 module.exports = Tabasco =
-  subscriptions: null
 
   activate: (state) ->
-    @subscriptions = new CompositeDisposable
-    @subscriptions.add atom.packages.onDidActivatePackage (pkg) => @packageActivated(pkg)
-    @subscriptions.add atom.packages.onDidDeactivatePackage (pkg) => @packageDeactivated(pkg)
-    @subscriptions.add atom.workspace.observePanes (pane) => @paneAdded(pane)
-    @subscriptions.add atom.workspace.onDidDestroyPane (pane) => @paneRemoved(pane)
-    @subscriptions.add atom.workspace.onDidAddPaneItem => @removeZones()
-    @subscriptions.add atom.workspace.onDidDestroyPaneItem => @removeZones()
-    @tabBarViews = [];
+    @disposables = new CompositeDisposable();
+    @disposables.add atom.packages.onDidActivatePackage (pkg) => @packageActivated(pkg)
+    @disposables.add atom.packages.onDidDeactivatePackage (pkg) => @packageDeactivated(pkg)
     @zones = [];
 
     if atom.packages.isPackageActive('tabs')
-      @tabsActivated();
+      @tabsActivated(atom.packages.getActivePackage('tabs'));
 
   deactivate: ->
-    @subscriptions.dispose()
+    @disposables.dispose()
 
   packageActivated: (pkg) ->
     if pkg.name == 'tabs'
-      @tabs = pkg;
+      @tabsActivated(pkg);
 
   packageDeactivated: (pkg) ->
     if pkg.name == 'tabs'
-      @tabs = null;
+      @tabsDeactivated();
+
+  tabsActivated: (@tabs) ->
+    @paneDisposables = new CompositeDisposable();
+    @paneDisposables.add atom.workspace.observePanes (pane) => @paneAdded(pane)
+    @paneDisposables.add atom.workspace.onDidDestroyPane (pane) => @paneRemoved(pane)
+    @paneDisposables.add atom.workspace.onDidAddPaneItem => @removeZones()
+    @paneDisposables.add atom.workspace.onDidDestroyPaneItem => @removeZones()
+
+  tabsDeactivated: ->
+    @tabs = null;
+    @paneDisposables.dispose();
 
   paneAdded: (pane) ->
-    if !@tabs?
-      return;
-
     for tabBarView in @tabs.mainModule.tabBarViews
       if tabBarView.pane == pane
         pane.onDidMoveItem => @removeZones();
@@ -46,12 +48,8 @@ module.exports = Tabasco =
     @removeZones();
 
   tabBarViewAdded: (tabBarView) ->
-    if tabBarView in @tabBarViews
-      return;
-
     tabBarView.addEventListener "dragstart", (e) => @onDragStart(e)
     tabBarView.addEventListener "dragend", (e) => @onDragEnd(e)
-    @tabBarViews.push(tabBarView);
 
   onDragStart: (e) ->
     panes = atom.workspace.getPanes();

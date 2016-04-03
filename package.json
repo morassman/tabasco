@@ -2,7 +2,7 @@
   "name": "tabasco",
   "main": "./lib/tabasco",
   "version": "0.0.0",
-  "description": "Drag a panel's tab to dock relative to other panels",
+  "description": "Dock and move panels by dragging their tabs",
   "keywords": [
   ],
   "repository": "https://github.com/morassman/tabasco",
