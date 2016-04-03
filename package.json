@@ -1,0 +1,16 @@
+{
+  "name": "tabasco",
+  "main": "./lib/tabasco",
+  "version": "0.0.0",
+  "description": "Drag a panel's tab to dock relative to other panels",
+  "keywords": [
+  ],
+  "repository": "https://github.com/morassman/tabasco",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "atom-space-pen-views": "^2.0.5"
+  }
+}
