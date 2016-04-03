@@ -3,7 +3,11 @@
   "main": "./lib/tabasco",
   "version": "0.2.0",
   "description": "Dock and move panels by dragging their tabs",
-  "keywords": [],
+  "keywords": [
+    "tab",
+    "dock",
+    "layout"
+  ],
   "repository": "https://github.com/morassman/tabasco",
   "license": "MIT",
   "engines": {
