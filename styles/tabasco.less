@@ -4,15 +4,53 @@
   top: 0;
   left: 0;
   position: absolute;
-  background-color: fadeout(@background-color-info, 90%);
 }
 
-.tabasco-grab-zone-center {
-  top: 0;
-  left: 0;
-  position: absolute;
+.tabasco-left-grab-zone {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to right, fadeout(@background-color-info, 90%), fadeout(@background-color-info, 100%));
 }
 
-.tabasco-grab-zone-hover {
-  background-color: fadeout(@background-color-info, 50%);
+.tabasco-right-grab-zone {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to left, fadeout(@background-color-info, 90%), fadeout(@background-color-info, 100%));
+}
+
+.tabasco-top-grab-zone {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to bottom, fadeout(@background-color-info, 90%), fadeout(@background-color-info, 100%));
+}
+
+.tabasco-bottom-grab-zone {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to top, fadeout(@background-color-info, 90%), fadeout(@background-color-info, 100%));
+}
+
+.tabasco-left-grab-zone-hover {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to right, fadeout(@background-color-info, 50%), fadeout(@background-color-info, 100%));
+}
+
+.tabasco-right-grab-zone-hover {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to left, fadeout(@background-color-info, 50%), fadeout(@background-color-info, 100%));
+}
+
+.tabasco-top-grab-zone-hover {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to bottom, fadeout(@background-color-info, 50%), fadeout(@background-color-info, 100%));
+}
+
+.tabasco-bottom-grab-zone-hover {
+  .tabasco-grab-zone;
+  background-image: linear-gradient(to top, fadeout(@background-color-info, 50%), fadeout(@background-color-info, 100%));
+}
+
+.tabasco-center-grab-zone {
+  .tabasco-grab-zone;
+}
+
+.tabasco-center-grab-zone-hover {
+  .tabasco-grab-zone;
+  background-color: fadeout(@background-color-info, 80%);
 }

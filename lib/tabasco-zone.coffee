@@ -7,10 +7,7 @@ class TabascoZone extends HTMLElement
     super();
 
   initialize: (@main, @activePane, @activePaneItem, @targetPane, @position) ->
-    if @position == 'center'
-      @.classList.add('tabasco-grab-zone-center');
-    else
-      @.classList.add('tabasco-grab-zone');
+    @.classList.add("tabasco-#{@position}-grab-zone");
 
     itemView = atom.views.getView(@targetPane.getActiveItem());
     @paneView = $(atom.views.getView(@targetPane));
@@ -58,10 +55,10 @@ class TabascoZone extends HTMLElement
     @paneView.append(tdz);
 
   handleDragEnter: (e) ->
-    @.classList.add('tabasco-grab-zone-hover');
+    @.classList.add("tabasco-#{@position}-grab-zone-hover");
 
   handleDragLeave: (e) ->
-    @.classList.remove('tabasco-grab-zone-hover');
+    @.classList.remove("tabasco-#{@position}-grab-zone-hover");
 
   handleDrop: (e) ->
     @moveItemToTarget();
@@ -97,6 +94,15 @@ class TabascoZone extends HTMLElement
     # For some reason this doesn't cause the item to get focus...
     newPane?.activate();
     newPane?.activateItem(newPane.getItems()[0]);
+
+    emptyPanes = [];
+
+    for pane in atom.workspace.getPanes()
+      if pane.getItems().length == 0
+        emptyPanes.push(pane);
+
+    for pane in emptyPanes
+      pane.destroy();
 
   # Got this from the tabs package.
   copyItem: (item) ->
