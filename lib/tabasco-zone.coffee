@@ -6,17 +6,22 @@ class TabascoZone extends HTMLElement
   constructor: ->
     super();
 
-  initialize: (@main, @activePane, @activePaneItem, @targetPane, @position) ->
+  initialize: (@main, @activePane, @activePaneItem, @targetPane, @position, centerOnly = false) ->
     @.classList.add("tabasco-#{@position}-grab-zone");
 
     itemView = atom.views.getView(@targetPane.getActiveItem());
     @paneView = $(atom.views.getView(@targetPane));
-    top = @paneView.height() - itemView.offsetHeight;
+    offsetHeight = @paneView.height();
+
+    if itemView?
+      offsetHeight = itemView.offsetHeight;
+
+    top = @paneView.height() - offsetHeight;
 
     vWidth = @paneView.width() / 10;
-    vHeight = itemView.offsetHeight;
+    vHeight = offsetHeight;
     hWidth = @paneView.width();
-    hHeight = itemView.offsetHeight / 10;
+    hHeight = offsetHeight / 10;
 
     vWidth = Math.min(vWidth, hHeight);
     hHeight = vWidth;
@@ -43,10 +48,16 @@ class TabascoZone extends HTMLElement
       tdz.width(hWidth - vWidth - vWidth);
       tdz.height(hHeight);
     else if @position == 'center'
-      tdz.css({'top' : (top + hHeight) + 'px'});
-      tdz.css({'left' : vWidth + 'px'});
-      tdz.width(hWidth- vWidth - vWidth);
-      tdz.height(vHeight - hHeight - hHeight);
+      if centerOnly
+        tdz.css({'top' : '0px'});
+        tdz.css({'left' : '0px'});
+        tdz.width(hWidth);
+        tdz.height(vHeight);
+      else
+        tdz.css({'top' : (top + hHeight) + 'px'});
+        tdz.css({'left' : vWidth + 'px'});
+        tdz.width(hWidth- vWidth - vWidth);
+        tdz.height(vHeight - hHeight - hHeight);
 
     @.addEventListener('dragenter', @handleDragEnter, false);
     @.addEventListener('dragleave', @handleDragLeave, false);
@@ -94,15 +105,6 @@ class TabascoZone extends HTMLElement
     # For some reason this doesn't cause the item to get focus...
     newPane?.activate();
     newPane?.activateItem(newPane.getItems()[0]);
-
-    emptyPanes = [];
-
-    for pane in atom.workspace.getPanes()
-      if pane.getItems().length == 0
-        emptyPanes.push(pane);
-
-    for pane in emptyPanes
-      pane.destroy();
 
   # Got this from the tabs package.
   copyItem: (item) ->

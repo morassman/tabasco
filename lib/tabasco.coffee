@@ -101,22 +101,24 @@ module.exports = Tabasco =
     @zones = [];
 
   addZones: (activePane, activePaneItem, targetPane) ->
-    left = new TabascoZone();
-    right = new TabascoZone();
-    top = new TabascoZone();
-    bottom = new TabascoZone();
+    centerOnly = !targetPane.getActiveItem()?
+    if !centerOnly
+      left = new TabascoZone();
+      right = new TabascoZone();
+      top = new TabascoZone();
+      bottom = new TabascoZone();
 
-    left.initialize(@, activePane, activePaneItem, targetPane, 'left');
-    right.initialize(@, activePane, activePaneItem, targetPane, 'right');
-    top.initialize(@, activePane, activePaneItem, targetPane, 'top');
-    bottom.initialize(@, activePane, activePaneItem, targetPane, 'bottom');
+      left.initialize(@, activePane, activePaneItem, targetPane, 'left');
+      right.initialize(@, activePane, activePaneItem, targetPane, 'right');
+      top.initialize(@, activePane, activePaneItem, targetPane, 'top');
+      bottom.initialize(@, activePane, activePaneItem, targetPane, 'bottom');
 
-    @zones.push(left);
-    @zones.push(right);
-    @zones.push(top);
-    @zones.push(bottom);
+      @zones.push(left);
+      @zones.push(right);
+      @zones.push(top);
+      @zones.push(bottom);
 
     if activePane != targetPane
       center = new TabascoZone();
-      center.initialize(@, activePane, activePaneItem, targetPane, 'center');
+      center.initialize(@, activePane, activePaneItem, targetPane, 'center', centerOnly);
       @zones.push(center);
