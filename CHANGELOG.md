@@ -1,3 +1,7 @@
+## 0.4.0 - 13 April 2016
+* Added slight fade-in when showing drop zones.
+* Allow drop zones to be added even if tabs package is notified of panes after tabasco is.
+
 ## 0.3.1 - 7 April 2016
 * Added ability to move tab to empty pane.
 

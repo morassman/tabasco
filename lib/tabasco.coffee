@@ -1,6 +1,7 @@
-{CompositeDisposable} = require 'atom'
 {$} = require 'atom-space-pen-views'
+{CompositeDisposable} = require 'atom'
 TabascoZone = require './tabasco-zone'
+PaneListener = require './pane-listener'
 
 module.exports = Tabasco =
 
@@ -10,6 +11,7 @@ module.exports = Tabasco =
     @disposables.add atom.packages.onDidDeactivatePackage (pkg) => @packageDeactivated(pkg)
     @zones = [];
     @tabBarViews = [];
+    @paneListeners = [];
 
     @sf = (e) => @onDragStart(e);
     @ef = (e) => @onDragEnd(e);
@@ -18,6 +20,7 @@ module.exports = Tabasco =
       @tabsActivated(atom.packages.getActivePackage('tabs'));
 
   deactivate: ->
+    @tabsDeactivated();
     @disposables.dispose()
 
   packageActivated: (pkg) ->
@@ -30,26 +33,26 @@ module.exports = Tabasco =
 
   tabsActivated: (@tabs) ->
     @paneDisposables = new CompositeDisposable();
-    @tabBarViewDisposables = new CompositeDisposable();
     @paneDisposables.add atom.workspace.observePanes (pane) => @paneAdded(pane)
-    @paneDisposables.add atom.workspace.onDidDestroyPane (pane) => @paneRemoved(pane)
+    @paneDisposables.add atom.workspace.onDidDestroyPane (event) => @paneRemoved(event.pane)
     @paneDisposables.add atom.workspace.onDidAddPaneItem => @removeZones()
     @paneDisposables.add atom.workspace.onDidDestroyPaneItem => @removeZones()
 
   tabsDeactivated: ->
     @tabs = null;
-    @tabBarViews = [];
+    @removeZones();
+    @removeTabBarViews();
+    @removePaneListeners();
     @paneDisposables?.dispose();
 
   paneAdded: (pane) ->
-    for tabBarView in @tabs.mainModule.tabBarViews
-      if tabBarView.pane == pane
-        pane.onDidMoveItem => @removeZones();
-        pane.onDidAddItem => @removeZones();
-        pane.onDidRemoveItem => @removeZones();
-        @tabBarViewAdded(tabBarView);
-
     @removeZones();
+
+    if !@connectPaneWithTabBarView(pane)
+      console.log("TabBarView not found. Adding listener.");
+      paneListener = new PaneListener();
+      @paneListeners.push(paneListener);
+      paneListener.initialize(@, pane);
 
   paneRemoved: (pane) ->
     tbv = null;
@@ -61,20 +64,71 @@ module.exports = Tabasco =
     if tbv?
       @tabBarViewRemoved(tbv);
 
+    paneListener = @getPaneListener(pane);
+
+    if paneListener?
+      @removePaneListener(paneListener);
+
     @removeZones();
 
-  tabBarViewRemoved: (tabBarView) ->
-    index = @tabBarViews.indexof(tabBarView);
+  connectPaneWithTabBarView: (pane) ->
+    for tabBarView in @tabs.mainModule.tabBarViews
+      if tabBarView.pane == pane
+        pane.onDidMoveItem => @removeZones();
+        pane.onDidAddItem => @removeZones();
+        pane.onDidRemoveItem => @removeZones();
+        @tabBarViewAdded(tabBarView);
+        return true;
+
+    return false;
+
+  getPaneListener: (pane) ->
+    for paneListener in @paneListeners
+      if paneListener.pane == pane
+        return paneListener;
+
+    return null;
+
+  paneListenerTriggered: (paneListener) ->
+    if @connectPaneWithTabBarView(paneListener.pane)
+      @removePaneListener(paneListener);
+
+  removePaneListener: (paneListener) ->
+    index = @paneListeners.indexOf(paneListener);
 
     if index > -1
-      @tabBarViews.splice(index, 1);
-      tabBarView.removeEventListener 'dragstart', @sf
-      tabBarView.removeEventListener 'dragend', @ef
+      @paneListeners.splice(index, 1);
+
+    paneListener.dispose();
+
+  removePaneListeners: ->
+    for paneListener in @paneListeners
+      paneListener.dispose();
+
+    @paneListeners = [];
 
   tabBarViewAdded: (tabBarView) ->
     @tabBarViews.push(tabBarView);
     tabBarView.addEventListener 'dragstart', @sf
     tabBarView.addEventListener 'dragend', @ef
+
+  tabBarViewRemoved: (tabBarView) ->
+    index = @tabBarViews.indexOf(tabBarView);
+
+    if index > -1
+      @tabBarViews.splice(index, 1);
+
+    @removeTabBarViewListener(tabBarView);
+
+  removeTabBarViewListener: (tabBarView) ->
+    tabBarView.removeEventListener 'dragstart', @sf
+    tabBarView.removeEventListener 'dragend', @ef
+
+  removeTabBarViews: ->
+    for tabBarView in @tabBarViews
+      @removeTabBarViewListener(tabBarView);
+
+    @tabBarViews = [];
 
   onDragStart: (e) ->
     panes = atom.workspace.getPanes();

@@ -10,60 +10,63 @@ class TabascoZone extends HTMLElement
     @.classList.add("tabasco-#{@position}-grab-zone");
 
     itemView = atom.views.getView(@targetPane.getActiveItem());
-    @paneView = $(atom.views.getView(@targetPane));
-    offsetHeight = @paneView.height();
+    paneView = atom.views.getView(@targetPane);
+    @jPaneView = $(paneView);
+    offsetHeight = @jPaneView.height();
 
     if itemView?
       offsetHeight = itemView.offsetHeight;
 
-    top = @paneView.height() - offsetHeight;
+    top = @jPaneView.height() - offsetHeight;
 
-    vWidth = @paneView.width() / 10;
+    vWidth = @jPaneView.width() / 10;
     vHeight = offsetHeight;
-    hWidth = @paneView.width();
+    hWidth = @jPaneView.width();
     hHeight = offsetHeight / 10;
 
     vWidth = Math.min(vWidth, hHeight);
     hHeight = vWidth;
 
-    tdz = $(@);
+    jMe = $(@);
 
     if @position == 'left'
-      tdz.css({'top' : (top + hHeight) + 'px'});
-      tdz.width(vWidth);
-      tdz.height(vHeight - hHeight - hHeight);
+      jMe.css({'top' : (top + hHeight) + 'px'});
+      jMe.width(vWidth);
+      jMe.height(vHeight - hHeight - hHeight);
     else if @position == 'right'
-      tdz.css({'top' : (top + hHeight) + 'px'});
-      tdz.css({'left' : (@paneView.width() - vWidth) + 'px'});
-      tdz.width(vWidth);
-      tdz.height(vHeight - hHeight - hHeight);
+      jMe.css({'top' : (top + hHeight) + 'px'});
+      jMe.css({'left' : (@jPaneView.width() - vWidth) + 'px'});
+      jMe.width(vWidth);
+      jMe.height(vHeight - hHeight - hHeight);
     else if @position == 'top'
-      tdz.css({'top' : top + 'px'});
-      tdz.css({'left' : vWidth + 'px'});
-      tdz.width(hWidth - vWidth - vWidth);
-      tdz.height(hHeight);
+      jMe.css({'top' : top + 'px'});
+      jMe.css({'left' : vWidth + 'px'});
+      jMe.width(hWidth - vWidth - vWidth);
+      jMe.height(hHeight);
     else if @position == 'bottom'
-      tdz.css({'top' : (@paneView.height() - hHeight) + 'px'});
-      tdz.css({'left' : vWidth + 'px'});
-      tdz.width(hWidth - vWidth - vWidth);
-      tdz.height(hHeight);
+      jMe.css({'top' : (@jPaneView.height() - hHeight) + 'px'});
+      jMe.css({'left' : vWidth + 'px'});
+      jMe.width(hWidth - vWidth - vWidth);
+      jMe.height(hHeight);
     else if @position == 'center'
       if centerOnly
-        tdz.css({'top' : '0px'});
-        tdz.css({'left' : '0px'});
-        tdz.width(hWidth);
-        tdz.height(vHeight);
+        jMe.css({'top' : '0px'});
+        jMe.css({'left' : '0px'});
+        jMe.width(hWidth);
+        jMe.height(vHeight);
       else
-        tdz.css({'top' : (top + hHeight) + 'px'});
-        tdz.css({'left' : vWidth + 'px'});
-        tdz.width(hWidth- vWidth - vWidth);
-        tdz.height(vHeight - hHeight - hHeight);
+        jMe.css({'top' : (top + hHeight) + 'px'});
+        jMe.css({'left' : vWidth + 'px'});
+        jMe.width(hWidth- vWidth - vWidth);
+        jMe.height(vHeight - hHeight - hHeight);
 
     @.addEventListener('dragenter', @handleDragEnter, false);
     @.addEventListener('dragleave', @handleDragLeave, false);
     @.addEventListener('drop', @handleDrop, false);
 
-    @paneView.append(tdz);
+    jMe.hide();
+    @jPaneView.append(jMe);
+    jMe.fadeIn(250)
 
   handleDragEnter: (e) ->
     @.classList.add("tabasco-#{@position}-grab-zone-hover");
