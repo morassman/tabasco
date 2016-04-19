@@ -1,3 +1,6 @@
+## 0.4.1 - 19 April 2016
+* Increased drop zone's z-index to work with atom-material-ui theme.
+
 ## 0.4.0 - 13 April 2016
 * Added slight fade-in when showing drop zones.
 * Allow drop zones to be added even if tabs package is notified of panes after tabasco is.
