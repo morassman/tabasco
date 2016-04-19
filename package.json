@@ -1,7 +1,7 @@
 {
   "name": "tabasco",
   "main": "./lib/tabasco",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Dock and move panes by dragging their tabs",
   "keywords": [
     "tab",
