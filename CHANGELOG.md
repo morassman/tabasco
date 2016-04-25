@@ -1,3 +1,6 @@
+## 0.5.0 - 25 April 2016
+* Added ability to copy item by holding down ctrl.
+
 ## 0.4.1 - 19 April 2016
 * Increased drop zone's z-index to work with atom-material-ui theme.
 

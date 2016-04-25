@@ -135,12 +135,10 @@ module.exports = Tabasco =
     activePane = atom.workspace.getActivePane();
     activePaneItem = atom.workspace.getActivePaneItem();
     workspaceView = atom.views.getView(atom.workspace);
-    includeActivePane = activePane.getItems().length > 1;
     @zones = [];
 
     for pane in panes
-      if pane != activePane or includeActivePane
-        @addZones(activePane, activePaneItem, pane);
+      @addZones(activePane, activePaneItem, pane);
 
   onDragEnd: (e) ->
     @removeZones();
@@ -156,6 +154,7 @@ module.exports = Tabasco =
 
   addZones: (activePane, activePaneItem, targetPane) ->
     centerOnly = !targetPane.getActiveItem()?
+
     if !centerOnly
       left = new TabascoZone();
       right = new TabascoZone();
@@ -172,7 +171,6 @@ module.exports = Tabasco =
       @zones.push(top);
       @zones.push(bottom);
 
-    if activePane != targetPane
-      center = new TabascoZone();
-      center.initialize(@, activePane, activePaneItem, targetPane, 'center', centerOnly);
-      @zones.push(center);
+    center = new TabascoZone();
+    center.initialize(@, activePane, activePaneItem, targetPane, 'center', centerOnly);
+    @zones.push(center);
